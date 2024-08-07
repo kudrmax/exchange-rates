@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from app.crud import CRUD
 from app.currencies.models import MCurrency
-from app.currencies.schemas import SCurrencyCreate
+from app.currencies.schemas import SCurrencyCreate, SCurrencyUpdate
 
 
 class DAOCurrencies(CRUD):
@@ -33,3 +33,33 @@ class DAOCurrencies(CRUD):
         await session.commit()
         await session.refresh(obj)
         return obj.__dict__
+
+    @classmethod
+    async def update(cls, session, code: str, update_object: SCurrencyUpdate):
+        obj = await cls.get_one_or_none_with_filter(session, code=code)
+        if not obj:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        if not cls._is_code_correct(update_object.code):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Code must be exectly 3 letter.')
+        if update_object.code:
+            second_obj = await cls.get_one_or_none_with_filter(session, code=update_object.code)
+            if second_obj:
+                raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                    detail=f'Object with code={update_object.code} already exists.')
+        for key, val in update_object.model_dump(exclude_none=True).items():
+            setattr(obj, key, val)
+        await session.commit()
+        await session.refresh(obj)
+        return obj.__dict__
+
+    @classmethod
+    async def delete(cls, session, code: str):
+        if not cls._is_code_correct(code):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Code must be exectly 3 letter.')
+        obj = await cls.get_one_or_none_with_filter(session, code=code)
+        if not obj:
+            return None
+        obj_ro_return = obj.__dict__
+        await session.delete(obj)
+        await session.commit()
+        return obj_ro_return

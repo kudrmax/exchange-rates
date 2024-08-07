@@ -26,11 +26,11 @@ async def add_currency(currency: SCurrencyCreate, session=Depends(get_session)) 
     return await DAOCurrencies().create(session, currency)
 
 
-@router.put('/update/{id}')
-async def update_currency(id: int, currency: SCurrencyUpdate, session=Depends(get_session)) -> Optional[SCurrency]:
-    return await DAOCurrencies().update(session, id, currency)
+@router.put('/update/{code}')
+async def update_currency(code: str, currency: SCurrencyUpdate, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().update(session, code, currency)
 
 
-@router.delete('/delete/{id}')
-async def delete_currency(id: int, session=Depends(get_session)) -> Optional[SCurrency]:
-    return await DAOCurrencies().delete(session, id)
+@router.delete('/delete/{code}')
+async def delete_currency(code: str, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().delete(session, code)
