@@ -7,7 +7,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.currencies.models import MCurrency
+from app.currencies.models import *
+from app.exchange_rates.models import *
 from app.database import Base, DATABASE_URL
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
