@@ -32,7 +32,7 @@ class DAOCurrencies(CRUD):
         session.add(obj)
         await session.commit()
         await session.refresh(obj)
-        return obj.__dict__
+        return obj
 
     @classmethod
     async def update(cls, session, code: str, update_object: SCurrencyUpdate):
@@ -50,7 +50,7 @@ class DAOCurrencies(CRUD):
             setattr(obj, key, val)
         await session.commit()
         await session.refresh(obj)
-        return obj.__dict__
+        return obj
 
     @classmethod
     async def delete(cls, session, code: str):

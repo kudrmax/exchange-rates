@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get('/')
-async def get_currencies(session=Depends(get_session)) -> Optional[List[SCurrency]]:
+async def get_currencies(session=Depends(get_session)) -> List[SCurrency]:
     return await DAOCurrencies().get_all_with_filter(session)
 
 @router.get('/{code}')
