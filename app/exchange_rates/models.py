@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, Float
 from app.database import Base
 
 
-class MCurrency(Base):
+class MExchangeRate(Base):
     __tablename__ = 'exchange_rates'
 
     id = Column(Integer, primary_key=True)
