@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.currencies.dao import DAOCurrencies
 from app.currencies.schemas import SCurrency, SCurrencyCreate, SCurrencyUpdate
-from app.currencies.models import MCurrency
+from app.database import get_session
 
 router = APIRouter(
     prefix='/currencies',
@@ -13,30 +13,24 @@ router = APIRouter(
 
 
 @router.get('/')
-async def get_currencies() -> List[SCurrency]:
-    return await DAOCurrencies()._get_all()
-
-
-@router.get('/{id}')
-async def get_one_or_none_currencies(id: int) -> Optional[SCurrency]:
-    return await DAOCurrencies()._get_one_or_none(id=id)
-
+async def get_currencies(session=Depends(get_session)) -> Optional[List[SCurrency]]:
+    return await DAOCurrencies().get_all_with_filter(session)
 
 @router.get('/{code}')
-async def get_one_or_none_currencies(code: str) -> Optional[SCurrency]:
-    return await DAOCurrencies()._get_one_or_none(code=code)
+async def get_one_or_none_currencies(code: str, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().get_one_or_none_by_code(session, code=code)
 
 
 @router.post('/create')
-async def add_currency(currency: SCurrencyCreate) -> None:
-    return await DAOCurrencies().create(currency)
+async def add_currency(currency: SCurrencyCreate, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().create(session, currency)
 
 
 @router.put('/update/{id}')
-async def update_currency(id: int, currency: SCurrencyUpdate):
-    return await DAOCurrencies().update(id, currency)
+async def update_currency(id: int, currency: SCurrencyUpdate, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().update(session, id, currency)
 
 
 @router.delete('/delete/{id}')
-async def delete_currency(id: int):
-    return await DAOCurrencies().delete(id)
+async def delete_currency(id: int, session=Depends(get_session)) -> Optional[SCurrency]:
+    return await DAOCurrencies().delete(session, id)
