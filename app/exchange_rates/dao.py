@@ -19,6 +19,17 @@ class ExchangeRatesDAO(CRUD):
         return None
 
     @classmethod
+    async def get_pair_one_or_none(cls, session, base_currency_code: str, target_currency_code: str):
+        base_currency = await get_one_or_none_currencies(base_currency_code, session)
+        target_currency = await get_one_or_none_currencies(target_currency_code, session)
+
+        return await cls.get_one_or_none_with_filter(
+            session,
+            base_currency_id=base_currency.id,
+            target_currency_id=target_currency.id
+        )
+
+    @classmethod
     async def create(cls, new_exchange_rate: SExchangeRatesCreate, session):
 
         # base_currency = requests.get(f'http://0.0.0.0:8000/currencies/{new_exchange_rate.base_currency_code}')
@@ -30,10 +41,10 @@ class ExchangeRatesDAO(CRUD):
         if not base_currency or not target_currency:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Одна из валют не найдена!')
 
-        if await cls.get_one_or_none_with_filter(
+        if await cls.get_pair_one_or_none(
                 session,
-                base_currency_id=base_currency.id,
-                target_currency_id=target_currency.id
+                new_exchange_rate.base_currency_code,
+                new_exchange_rate.target_currency_code
         ):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
