@@ -5,6 +5,7 @@ from app.crud import CRUD
 from app.currencies.models import MCurrency
 from app.currencies.schemas import SCurrencyCreate
 
+
 class DAOCurrencies(CRUD):
     Model = MCurrency
 
