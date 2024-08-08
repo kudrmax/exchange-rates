@@ -37,9 +37,9 @@ class ExchangeRatesDAO(CRUD):
 
         query = select(cls.Model).filter_by(base_currency_id=base_currency.id, target_currency_id=target_currency.id)
         result = await session.execute(query)
-        if not result:
-            return None
         scalar = result.scalar()
+        if not scalar:
+            return None
         return await cls._get_pair_schema_by_id(
             scalar.base_currency_id,
             scalar.target_currency_id,
@@ -86,7 +86,6 @@ class ExchangeRatesDAO(CRUD):
     @classmethod
     async def _get_pair_schema_by_id(cls, base_code_id: int, target_code_id: int, session) -> Optional[SExchangeRates]:
         pair = await cls.get_pair_model_one_or_none_by_id(session, base_code_id, target_code_id)
-        print(pair.rate)
         if not pair:
             return None
         base_currency = await session.get(MCurrency, base_code_id)
@@ -140,6 +139,6 @@ class ExchangeRatesDAO(CRUD):
         await session.commit()
         await session.refresh(obj)
 
-        return cls._get_pair_schema_by_code(new_exchange_rate.base_currency_code,
+        return await cls._get_pair_schema_by_code(new_exchange_rate.base_currency_code,
                                             new_exchange_rate.target_currency_code,
                                             session)
