@@ -38,7 +38,7 @@ async def update_exchange_rate(codes: str, new_rate: SExchangeRatesUpdate, sessi
 
 
 @router.delete('/{codes}')
-async def update_exchange_rate(codes: str, new_rate: SExchangeRatesUpdate, session=Depends(get_session)):
+async def update_exchange_rate(codes: str, session=Depends(get_session)):
     base_code = codes[:3]
     target_code = codes[3:6]
-    pass
+    return await ExchangeRatesDAO.delete(base_code, target_code, session)

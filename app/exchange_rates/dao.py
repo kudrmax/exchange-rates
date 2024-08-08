@@ -112,6 +112,15 @@ class ExchangeRatesDAO(CRUD):
         return await cls._get_pair_schema_by_code(base_code, target_code, session)
 
     @classmethod
+    async def delete(cls, base_code: str, target_code: str, session):
+        obj = await cls.get_pair_model_one_or_none_by_code(session, base_code, target_code)
+        if not obj:
+            return None
+        await session.delete(obj)
+        await session.commit()
+        return None
+
+    @classmethod
     async def create(cls, new_exchange_rate: SExchangeRatesCreate, session):
 
         base_currency = await get_one_or_none_currencies(new_exchange_rate.base_currency_code, session)
@@ -139,6 +148,8 @@ class ExchangeRatesDAO(CRUD):
         await session.commit()
         await session.refresh(obj)
 
-        return await cls._get_pair_schema_by_code(new_exchange_rate.base_currency_code,
-                                            new_exchange_rate.target_currency_code,
-                                            session)
+        return await cls._get_pair_schema_by_code(
+            new_exchange_rate.base_currency_code,
+            new_exchange_rate.target_currency_code,
+            session
+        )
