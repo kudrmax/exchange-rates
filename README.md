@@ -8,6 +8,25 @@
 
 ![rest.png](docs/rest.png)
 
+## База данных
+
+### Таблица currencies
+
+| Колонка | Тип     | Описание          |
+|---------|---------|-------------------|
+| id      | int     | ID валюты         |
+| code    | varchar | Код валюты        |
+| name    | varchar | Полное имя валюты |
+
+### Таблица exchange_rates
+
+| Колонка            | Тип   | Описание                                                    |
+|--------------------|-------|-------------------------------------------------------------|
+| id                 | int   | ID обменного курса                                          |
+| base_currency_id   | int   | ID базовой валюты                                           |
+| target_currency_id | int   | ID целевой валюты                                           |
+| rate               | float | Курс обмена единицы базовой валюты к единице целевой валюты |
+
 ## Реализованные API
 
 ### `/currencies`
@@ -105,6 +124,12 @@ source venv/bin/activate  # для Windows: venv\Scripts\activate
 
 # Установите зависимости:
 pip install -r requirements.txt
+
+# Запустить PostgreSQL через Docker
+# ДОПИСАТЬ
+
+# Запустить миграции через Alembic
+# ДОПИСАТЬ
 
 # Запустите приложение:
 python main.py  # python3 для UNIX-систем
