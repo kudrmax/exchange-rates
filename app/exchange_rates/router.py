@@ -14,12 +14,14 @@ router = APIRouter(
 
 
 @router.get('/')
-async def get_all_exchange_rate():
-    pass
+async def get_all_exchange_rate(session=Depends(get_session)):
+    return await ExchangeRatesDAO.get_all_with_filter(session)
 
 
-@router.get('/{base_code}{target_code}')
-async def get_exchange_rate(base_code: str, target_code: str):
+@router.get('/{codes}')
+async def get_exchange_rate(codes: str):
+    base_code = codes[:3]
+    target_code = codes[3:6]
     pass
 
 
@@ -33,3 +35,10 @@ async def update_exchange_rate(codes: str, new_rate: SExchangeRatesUpdate, sessi
     base_code = codes[:3]
     target_code = codes[3:6]
     return await ExchangeRatesDAO.update(base_code, target_code, new_rate.rate, session)
+
+
+@router.delete('/{codes}')
+async def update_exchange_rate(codes: str, new_rate: SExchangeRatesUpdate, session=Depends(get_session)):
+    base_code = codes[:3]
+    target_code = codes[3:6]
+    pass
