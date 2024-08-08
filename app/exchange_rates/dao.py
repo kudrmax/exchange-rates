@@ -1,10 +1,12 @@
+from typing import Optional
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 
 from app.crud import CRUD
 from app.currencies.schemas import SCurrency
 from app.exchange_rates.models import MExchangeRate
-from app.exchange_rates.schemas import SExchangeRatesCreate, SExchangeRates
+from app.exchange_rates.schemas import SExchangeRatesCreate, SExchangeRates, SExchangeRatesUpdate
 
 import requests
 
@@ -13,6 +15,8 @@ from app.currencies.router import get_one_or_none_currencies, get_currencies
 
 class ExchangeRatesDAO(CRUD):
     Model = MExchangeRate
+
+
 
     @classmethod
     async def get_all(cls):
@@ -28,6 +32,34 @@ class ExchangeRatesDAO(CRUD):
             base_currency_id=base_currency.id,
             target_currency_id=target_currency.id
         )
+
+    @classmethod
+    async def _get_return_pair(cls, base_code: str, target_code: str, session) -> Optional[SExchangeRates]:
+        pair = await cls.get_pair_one_or_none(session, base_code, target_code)
+        if not pair:
+            return None
+        base_currency = await get_one_or_none_currencies(base_code, session)
+        target_currency = await get_one_or_none_currencies(target_code, session)
+
+        return SExchangeRates(
+            id=pair.id,
+            base_currency=SCurrency(**base_currency.__dict__),
+            target_currency=SCurrency(**target_currency.__dict__),
+            rate=pair.rate
+        )
+
+    @classmethod
+    async def update(cls, base_code: str, target_code: str, new_rate: float, session):
+        obj = await cls.get_pair_one_or_none(session, base_code, target_code)
+        if not obj:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'There is no pair with codes {base_code} and {target_code}!'
+            )
+
+        obj.rate = new_rate
+        session.refresh(obj)
+        return await cls._get_return_pair(base_code, target_code, session)
 
     @classmethod
     async def create(cls, new_exchange_rate: SExchangeRatesCreate, session):
@@ -60,11 +92,11 @@ class ExchangeRatesDAO(CRUD):
         await session.commit()
         await session.refresh(obj)
 
-        return_obj = SExchangeRates(
-            id=obj.id,
-            base_currency=SCurrency(**base_currency.__dict__),
-            target_currency=SCurrency(**target_currency.__dict__),
-            rate=new_exchange_rate.rate
-        )
+        # return_obj = SExchangeRates(
+        #     id=obj.id,
+        #     base_currency=SCurrency(**base_currency.__dict__),
+        #     target_currency=SCurrency(**target_currency.__dict__),
+        #     rate=new_exchange_rate.rate
+        # )
 
-        return return_obj
+        return cls._get_return_pair(new_exchange_rate.base_currency_code, new_exchange_rate.target_currency_code, session)

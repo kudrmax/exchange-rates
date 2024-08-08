@@ -13,3 +13,7 @@ class SExchangeRatesCreate(BaseModel):
     base_currency_code: str
     target_currency_code: str
     rate: float
+
+
+class SExchangeRatesUpdate(BaseModel):
+    rate: float
