@@ -4,6 +4,8 @@
 
 Стэк: `Python`, `FastAPI`, `SQLAlchemy`, `Pydantic`, `PostgreSQL`, `Alembic`, `BeautifulSoup`
 
+Скриншот из автосгенерировнного `OpenAPI` (ПЕРЕПИСАТЬ) через `FastAPI`:
+
 ![rest.png](docs/rest.png)
 
 ## Функционал
@@ -94,8 +96,8 @@ API для заполнения баз данных `currencies` и `exchange_ra
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/kudrmax/exchange-rate-synchronizer/
-   cd exchange-rate-synchronizer
+   git clone https://github.com/kudrmax/exchange-rates
+   cd exchange-rates
    ```
 
 2. Создайте и активируйте виртуальное окружение:
@@ -111,7 +113,7 @@ API для заполнения баз данных `currencies` и `exchange_ra
 
 5. Запустите приложение:
    ```bash
-    python app/main.py  # python3 для UNIX-систем
+    python main.py  # python3 для UNIX-систем
    ```
 
 6. Откройте браузер и перейдите по адресу [http://0.0.0.0:8000](http://0.0.0.0:8000).
@@ -120,8 +122,8 @@ API для заполнения баз данных `currencies` и `exchange_ra
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/kudrmax/exchange-rate-synchronizer/
-   cd exchange-rate-synchronizer
+   git clone https://github.com/kudrmax/exchange-rates
+   cd exchange-rates
    ```
 
 2. Установите Poetry, если он не установлен
@@ -139,13 +141,13 @@ API для заполнения баз данных `currencies` и `exchange_ra
 
 6. Запустите приложение:
    ```bash
-   python app/main.py  # python3 для UNIX-систем
+   python main.py  # python3 для UNIX-систем
    ```
 
 7. Откройте браузер и перейдите по адресу [http://0.0.0.0:8000](http://0.0.0.0:8000).
 
 ### Автор
 
-- **Макс Кудряшов**: студент 3 курса «Прикладной математики» НИУ ВШЭ.
+- **Макс Кудряшов**: студент 4 курса «Прикладной математики» НИУ ВШЭ.
 - Другие проекты: [GitHub](https://github.com/kudrmax/)
 - Связаться: [Telegram](https://t.me/kudrmax)
