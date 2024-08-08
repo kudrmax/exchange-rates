@@ -11,7 +11,7 @@ from app.exchange_rates.schemas import SExchangeRatesCreate, SExchangeRates, SEx
 
 import requests
 
-from app.currencies.router import get_one_or_none_currencies, get_currencies
+from app.currencies.router import get_one_or_none_currencies, get_all_currencies
 
 
 class ExchangeRatesDAO(CRUD):

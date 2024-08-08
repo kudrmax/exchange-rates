@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get('/')
-async def get_currencies(session=Depends(get_session)) -> List[SCurrency]:
+async def get_all_currencies(session=Depends(get_session)) -> List[SCurrency]:
     return await DAOCurrencies().get_all_with_filter(session)
 
 @router.get('/{code}')
@@ -21,16 +21,16 @@ async def get_one_or_none_currencies(code: str, session=Depends(get_session)) ->
     return await DAOCurrencies().get_one_or_none_by_code(session, code=code)
 
 
-@router.post('/create')
+@router.post('/')
 async def add_currency(currency: SCurrencyCreate, session=Depends(get_session)) -> Optional[SCurrency]:
     return await DAOCurrencies().create(session, currency)
 
 
-@router.put('/update/{code}')
+@router.patch('/{code}')
 async def update_currency(code: str, currency: SCurrencyUpdate, session=Depends(get_session)) -> Optional[SCurrency]:
     return await DAOCurrencies().update(session, code, currency)
 
 
-@router.delete('/delete/{code}')
+@router.delete('/{code}')
 async def delete_currency(code: str, session=Depends(get_session)) -> Optional[SCurrency]:
     return await DAOCurrencies().delete(session, code)

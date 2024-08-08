@@ -19,7 +19,7 @@ async def get_all_exchange_rate(session=Depends(get_session)):
 
 
 @router.get('/{codes}')
-async def get_exchange_rate(codes: str, session=Depends(get_session)):
+async def get_one_or_none_exchange_rate(codes: str, session=Depends(get_session)):
     base_code = codes[:3]
     target_code = codes[3:6]
     return await ExchangeRatesDAO.get_one_or_none_by_code(session, base_code, target_code)
