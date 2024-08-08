@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from app.exchange.schemas import SExchange
 from app.exchange_rates.router import get_one_or_none_exchange_rate
 
@@ -22,17 +24,23 @@ class DAOExchange:
         # в БД есть валютная пара FT
         if pair:
             return SExchange(
-                    base_currency = pair.base_currency,
-                    target_currency = pair.target_currency,
-                    rate = pair.rate,
-                    amount = amount,
-                    converted_amount = amount * pair.rate
-                )
+                base_currency=pair.base_currency,
+                target_currency=pair.target_currency,
+                rate=pair.rate,
+                amount=amount,
+                converted_amount=amount * pair.rate
+            )
 
-            # в БД нет валютной пары FT, но есть пара TF
+        # в БД нет валютной пары FT, но есть пара TF
         pair = await get_one_or_none_exchange_rate(code_to + code_from, session)
         if pair:
-            return
+            return SExchange(
+                base_currency=pair.target_currency,
+                target_currency=pair.base_currency,
+                rate=pair.rate,
+                amount=amount,
+                converted_amount=amount / pair.rate
+            )
 
         # в БД нет ни FT, ни TF
-        return
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"There is no exchange rate for {code_from} and {code_to}!")
